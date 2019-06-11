@@ -26,6 +26,12 @@ private:
 
   QSerialPort* m_pComPort;
 
+private slots:
+
+  void connectSerialPort();
+  void readyRead();
+
+
 };
 
 #endif // MAINWINDOW_H

@@ -20,6 +20,9 @@
       <property name="text">
        <string>Connect</string>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item row="0" column="0">
@@ -46,7 +49,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="comboBoxBaudrate">
         <item>
          <property name="text">
           <string>1200</string>

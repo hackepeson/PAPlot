@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
 
+
+/////////////////////////////// PLOT ////////////////////////////////////////
 #define CLOUD_VECTOR_LENGTH  1200
   for (int i = 0; i < CLOUD_VECTOR_LENGTH; i++)
   {
@@ -30,32 +32,81 @@ MainWindow::MainWindow(QWidget *parent) :
     {
       ui->widgetPlot->graph(i)->setPen(QPen(Qt::red));
     }
-
-
   }
 
   ui->widgetPlot->rescaleAxes();
   ui->widgetPlot->replot();
 
+////////////////////////// COM PORT ////////////////////////////////////////////
   m_pComPort = new QSerialPort(this);
- QSerialPortInfo port;
- QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
- foreach (port, ports)
- {
-   ui->comboBoxSerialPorts->addItem(port.portName() + " " + port.description());
-     //qDebug() << "port name:"       << info.portName;
-     //qDebug() << "friendly name:"   << info.friendName;
-     //qDebug() << "physical name:"   << info.physName;
-     //qDebug() << "enumerator name:" << info.enumName;
-     //qDebug() << "vendor ID:"       << info.vendorID;
-     //qDebug() << "product ID:"      << info.productID;
-     //qDebug() << "===================================";
- }
+  QSerialPortInfo port;
+  QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+  foreach (port, ports)
+  {
+    ui->comboBoxSerialPorts->addItem(port.portName() + " " + port.description());
+  }
+
+  connect(ui->pushButtonConnectComport, SIGNAL(clicked(bool)), SLOT(connectSerialPort()));
+  connect(m_pComPort, SIGNAL(readyRead()), SLOT(readyRead()));
+}
 
 
+void MainWindow::readyRead()
+{
+#define MAX_LINE_LENGTH 20000
 
+  while (m_pComPort->canReadLine())
+  {
+    QByteArray dataLine = m_pComPort->readLine(MAX_LINE_LENGTH);
+    if (dataLine.length() > what)
+    {
+
+    }
+  }
 
 }
+
+
+void MainWindow::connectSerialPort()
+{
+
+  if (ui->pushButtonConnectComport->isChecked())
+  {
+    if (!m_pComPort->isOpen())
+    {
+      QString comPort = ui->comboBoxSerialPorts->currentText();
+      QStringList nameList = comPort.split(" ");
+      m_pComPort->setPortName(nameList.at(0));
+
+      //m_pComPort->setReadBufferSize(1000);
+      bool ok;
+      if (m_pComPort->open(QIODevice::ReadWrite))
+      {
+        m_pComPort->setBaudRate(ui->comboBoxBaudrate->currentText().toInt(&ok));
+        m_pComPort->setFlowControl(QSerialPort::NoFlowControl);
+        m_pComPort->setDataBits(QSerialPort::Data8);
+        m_pComPort->setParity(QSerialPort::NoParity);
+        ui->statusBar->showMessage("COM port openened : " + comPort, 3000);
+
+        ui->pushButtonConnectComport->setText("Disconnect");
+        m_pComPort->flush();
+      }
+      else
+      {
+        ui->statusBar->showMessage("Failed to open COM port");
+      }
+
+    }
+  }
+  else
+  {
+    m_pComPort->close();
+    ui->pushButtonConnectComport->setText("Connect");
+  }
+}
+
+
+
 
 MainWindow::~MainWindow()
 {
