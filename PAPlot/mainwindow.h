@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSerialPort>
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +23,8 @@ private:
 
   QVector<double> m_vecCloudCurves[NO_OF_CURVES];
   QVector<double> m_vecX;
+
+  QSerialPort* m_pComPort;
 
 };
 

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QSerialPortInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -19,22 +20,37 @@ MainWindow::MainWindow(QWidget *parent) :
     {
       m_vecCloudCurves[i].append(sin(n*n+i*i*i*i)/100000);
     }
-    ui->widget->addGraph();
-    ui->widget->graph(i)->setData(m_vecX,m_vecCloudCurves[i]);
+    ui->widgetPlot->addGraph();
+    ui->widgetPlot->graph(i)->setData(m_vecX,m_vecCloudCurves[i]);
     if (i==0)
     {
-      ui->widget->graph(i)->setPen(QPen(Qt::cyan));
+      ui->widgetPlot->graph(i)->setPen(QPen(Qt::cyan));
     }
     else
     {
-      ui->widget->graph(i)->setPen(QPen(Qt::red));
+      ui->widgetPlot->graph(i)->setPen(QPen(Qt::red));
     }
 
 
   }
 
-  ui->widget->rescaleAxes();
-  ui->widget->replot();
+  ui->widgetPlot->rescaleAxes();
+  ui->widgetPlot->replot();
+
+  m_pComPort = new QSerialPort(this);
+ QSerialPortInfo port;
+ QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+ foreach (port, ports)
+ {
+   ui->comboBoxSerialPorts->addItem(port.portName() + " " + port.description());
+     //qDebug() << "port name:"       << info.portName;
+     //qDebug() << "friendly name:"   << info.friendName;
+     //qDebug() << "physical name:"   << info.physName;
+     //qDebug() << "enumerator name:" << info.enumName;
+     //qDebug() << "vendor ID:"       << info.vendorID;
+     //qDebug() << "product ID:"      << info.productID;
+     //qDebug() << "===================================";
+ }
 
 
 
