@@ -19,7 +19,9 @@ public:
 private:
   Ui::MainWindow *ui;
 
-#define NO_OF_CURVES 2
+#define NO_OF_CURVES 10
+
+  int m_dCurveIndex;
 
   QVector<double> m_vecCloudCurves[NO_OF_CURVES];
   QVector<double> m_vecX;
@@ -30,6 +32,7 @@ private slots:
 
   void connectSerialPort();
   void readyRead();
+  void saveData();
 
 
 };
